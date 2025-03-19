@@ -1,46 +1,58 @@
 import matplotlib.pyplot as plt
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
+from math import sqrt
 
 
 def forwardSelection(data, length):
     current_set = []
 
     for i in range(1, length):  
-        #print(f"On the {i}th level of the search tree")
-        highest_value = 0
-        best_feature = None 
+        print(f"On the {i}th level of the search tree")
+        featuresAdd = 0 #feature location
+        best_feature = 0 #feature acccuracy
         for j in range(1, length):  
             if j not in current_set:  
-                temp_set = current_set + [j] 
-                #print(f"--Considering adding {j} feature")
-                acc = knnAlgorithm(data, temp_set) 
-                if acc > highest_value:  
-                    highest_value = acc
-                    best_feature = j
+                print(f"--Considering adding {j} feature")
+                acc = accuracy(data, current_set, j) 
+                if acc > best_feature:  
+                    featuresAdd = j
+                    best_feature = acc
         
-        if best_feature is not None: 
-            current_set.append(best_feature)
-            #print(f"On level {i} added feature {best_feature} to current set")
-            print(f"Feature set {best_feature} was best, accuracy is {highest_value}%")
+        print(f"On level {i} added feature {featuresAdd} to current set")
+        #print(f"Feature set {best_feature} was best, accuracy is {highest_value}%")
+        current_set.append(featuresAdd)
+
+def accuracy(data, current_set, j):
+    length = len(data[0])
+
+    correctlyClassified = 0
+
+    for i in range(length):
+        objectClassifier = []
+        print(i)
+        for k in range(len(data)): #creating object tsting
+            objectClassifier.append(data[k][i])
+        print(objectClassifier)
+        nearestNeighborDis = float('inf')
+        nearestNeighborLoc = float('inf')
+        for j in range(length): #going through all data
+            if j != i:
+                distance = 0
+                for k in range(1, len(data)): #finding distances with any dimensions
+                    distance += (objectClassifier[k] - data[k][j]) ** 2
+                    print(objectClassifier[k], data[k][j])
+                print("hi")
+                distance = sqrt(distance)
+                if distance < nearestNeighborDis: #checks if new distance is smaller
+                    nearestNeighborDis = distance
+                    nearestNeighborLoc = data[0][j]
+                print("distance: ", distance, "loc: ", data[0][j])
+        if nearestNeighborLoc == objectClassifier[0]:
+            print("sucess guess: ", nearestNeighborLoc, objectClassifier[0])
+            correctlyClassified+= 1
         else:
-            #print("No more features to add.")
-            break  
-
-        #print(f"Current selected set: {current_set}")
-
-def knnAlgorithm(data, num):
-    #print(num)
-    X = list(zip(*[data[i] for i in num]))
-    y = data[0]  
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2) #random_state=42
-    knn = KNeighborsClassifier()  
-    knn.fit(X_train, y_train)    
-    predicted = knn.predict(X_test)
-    acc = accuracy_score(y_test, predicted)
-    print(f"    Using feature(s) {num} accuracy is {acc*100:.6f}%")
-    return acc*100
+            print("not good guess")
+        print("cc: ", correctlyClassified, "leng:", length)
+    return correctlyClassified / length
 
 def visualize(data):
     x = data[1]
@@ -57,6 +69,7 @@ def openingFile(fileName):
     features = []
     for i in range(length): #creating arrays
         features.append([])
+        features[i].append(float(f[i])) #adding initalf
         #print(features)
     while True:
         f=file.readline().split()
@@ -72,10 +85,14 @@ def openingFile(fileName):
     
 
 def main():
-    data = openingFile("CS170_Small_Data__3.txt")
+    data = openingFile("TestData.txt") #CS170_Small_Data__3.txt
     length = len(data)
     #forwardSelection(data, length)
-    temp = knnAlgorithm(data, [2,5,6]) #used for testing
+    #print(data)
+    #print(len(data[0]))
+    current_set = []
+    temp = accuracy(data, current_set, 0)
+    print(temp)
     return 
 
 main()
