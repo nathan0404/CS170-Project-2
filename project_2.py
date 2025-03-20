@@ -5,23 +5,28 @@ from math import sqrt
 def forwardSelection(data, length):
     current_set = []
 
+    max_acc = 0
+    max_set = []
+
     for i in range(1, length):  
-        print(f"On the {i}th level of the search tree")
+        #print(f"On the {i}th level of the search tree")
         featuresAdd = 0 #feature location
         best_feature = 0 #feature acccuracy
         for j in range(1, length):  
             if j not in current_set:  
-                #print(f"--Considering adding {j} feature")
-                acc = accuracy(data, current_set, j, 1) 
-                #print(f"        accuracy is {acc}")
+                acc = accuracy(data, current_set, j, 1) * 100
+                temp_set = current_set + [j]  # Simulating the addition of j for printing purposes
+                print(f"        Using feature(s) {{{', '.join(map(str, temp_set))}}} accuracy is {acc:.1f}%")
                 if acc > best_feature:  
                     featuresAdd = j
                     best_feature = acc
-        
-        #print(f"On level {i} added feature {featuresAdd} to current set")
-        print(f"Feature set {featuresAdd} was best, accuracy is {best_feature}%")
-        current_set.append(featuresAdd)
-
+        current_set.append(featuresAdd) 
+        print(f"Feature set {{{', '.join(map(str, current_set))}}} was best, accuracy is {best_feature:.1f}%")
+        if best_feature > max_acc:
+            max_acc = best_feature
+            max_set = current_set[:]
+    print(f"Finished search!! The best feature subset is {{{', '.join(map(str, max_set))}}}, which has an accuracy of {max_acc}%")
+    
 def backwardElimination(data, length):
     current_set = []
     for i in range(1, length):
@@ -37,7 +42,7 @@ def backwardElimination(data, length):
             if j in current_set:  
                 #print(f"--Considering removing {j} feature")
                 acc = accuracy(data, current_set, j, 2) 
-                #print(f"        accuracy is {acc}")
+                #print(f"        Using feature(s) accuracy is {acc}")
                 if acc > best_feature:  
                     featuresAdd = j
                     best_feature = acc
@@ -126,9 +131,13 @@ def openingFile(fileName):
 def main():
     data = openingFile("CS170_Small_Data__4.txt") #CS170_Small_Data__3.txt
     length = len(data)
-    print(length)
-    #forwardSelection(data, length)
-    backwardElimination(data, length)
+    print(f"This dataset has {length-1} features, with {len(data[0])} instances.")
+    print()
+    print("Running nearest neightbor, using leaving-one-out evaluation")
+    print()
+    print("Beginning search.")
+    forwardSelection(data, length)
+    #backwardElimination(data, length)
     #current_set = []
     #temp = accuracy(data, current_set, 1)
     #print(temp)
