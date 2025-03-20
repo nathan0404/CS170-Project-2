@@ -12,7 +12,7 @@ def forwardSelection(data, length):
         for j in range(1, length):  
             if j not in current_set:  
                 #print(f"--Considering adding {j} feature")
-                acc = accuracy(data, current_set, j) 
+                acc = accuracy(data, current_set, j, 1) 
                 #print(f"        accuracy is {acc}")
                 if acc > best_feature:  
                     featuresAdd = j
@@ -29,26 +29,26 @@ def backwardElimination(data, length):
 
     print(current_set)
 
-    
     for i in range(1, length):  
         print(f"On the {i}th level of the search tree")
         featuresAdd = 0 #feature location
         best_feature = 0 #feature acccuracy
         for j in range(1, length):  
-            if j not in current_set:  
-                print(f"--Considering removing {j} feature")
-                acc = accuracy(data, current_set, j) 
-                print(f"        accuracy is {acc}")
+            if j in current_set:  
+                #print(f"--Considering removing {j} feature")
+                acc = accuracy(data, current_set, j, 2) 
+                #print(f"        accuracy is {acc}")
                 if acc > best_feature:  
                     featuresAdd = j
                     best_feature = acc
         
         #print(f"On level {i} added feature {featuresAdd} to current set")
         print(f"Feature set {featuresAdd} was best, accuracy is {best_feature}%")
-        print("removing set")
-        current_set.append(featuresAdd)
+        #print("removing set")
+        current_set.remove(featuresAdd)
+        print(current_set)
 
-def accuracy(data, current_set, testing):
+def accuracy(data, current_set, testing, distingisher):
     length = len(data[0]) #finding length of rows to be searached
 
     correctlyClassified = 0
@@ -60,7 +60,12 @@ def accuracy(data, current_set, testing):
             #print("current set is empty")
             for k in range(len(current_set)): #creating object tsting
                 objectClassifier.append(current_set[k])
-        objectClassifier.append(testing) #adds testing column to object classsfier to tst
+        if distingisher == 1:
+            objectClassifier.append(testing) #adds testing column to object classsfier to test
+            #print("added column")
+        else:
+            objectClassifier.remove(testing)
+            #print("removed column")
         #print("object calssifier: ", objectClassifier, " and i value of ", i)
         nearestNeighborDis = float('inf')
         nearestNeighborLoc = float('inf')
@@ -119,7 +124,7 @@ def openingFile(fileName):
     
 
 def main():
-    data = openingFile("TestData.txt") #CS170_Small_Data__3.txt
+    data = openingFile("CS170_Small_Data__4.txt") #CS170_Small_Data__3.txt
     length = len(data)
     print(length)
     #forwardSelection(data, length)
