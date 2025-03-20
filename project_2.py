@@ -11,14 +11,41 @@ def forwardSelection(data, length):
         best_feature = 0 #feature acccuracy
         for j in range(1, length):  
             if j not in current_set:  
-                print(f"--Considering adding {j} feature")
+                #print(f"--Considering adding {j} feature")
                 acc = accuracy(data, current_set, j) 
+                #print(f"        accuracy is {acc}")
                 if acc > best_feature:  
                     featuresAdd = j
                     best_feature = acc
         
-        print(f"On level {i} added feature {featuresAdd} to current set")
-        #print(f"Feature set {best_feature} was best, accuracy is {highest_value}%")
+        #print(f"On level {i} added feature {featuresAdd} to current set")
+        print(f"Feature set {featuresAdd} was best, accuracy is {best_feature}%")
+        current_set.append(featuresAdd)
+
+def backwardElimination(data, length):
+    current_set = []
+    for i in range(1, length):
+        current_set.append(i)
+
+    print(current_set)
+
+    
+    for i in range(1, length):  
+        print(f"On the {i}th level of the search tree")
+        featuresAdd = 0 #feature location
+        best_feature = 0 #feature acccuracy
+        for j in range(1, length):  
+            if j not in current_set:  
+                print(f"--Considering removing {j} feature")
+                acc = accuracy(data, current_set, j) 
+                print(f"        accuracy is {acc}")
+                if acc > best_feature:  
+                    featuresAdd = j
+                    best_feature = acc
+        
+        #print(f"On level {i} added feature {featuresAdd} to current set")
+        print(f"Feature set {featuresAdd} was best, accuracy is {best_feature}%")
+        print("removing set")
         current_set.append(featuresAdd)
 
 def accuracy(data, current_set, testing):
@@ -28,36 +55,36 @@ def accuracy(data, current_set, testing):
 
     for i in range(length): #searching all rows
         objectClassifier = [] 
-        print(i)
+        #print(i)
         if len(current_set) != 0: #adds all current set to object Classifier
-            print("current set is empty")
+            #print("current set is empty")
             for k in range(len(current_set)): #creating object tsting
                 objectClassifier.append(current_set[k])
         objectClassifier.append(testing) #adds testing column to object classsfier to tst
-        print("object calssifier: ", objectClassifier)
+        #print("object calssifier: ", objectClassifier, " and i value of ", i)
         nearestNeighborDis = float('inf')
         nearestNeighborLoc = float('inf')
         for j in range(length): #going through all data
-            print("checking ", i, j)
+            #print("checking ", i, j)
             if j != i:
                 distance = 0
                 for k in range(0, len(objectClassifier)): #finding distances with any dimensions
                     distance += (data[objectClassifier[k]][i] - data[objectClassifier[k]][j]) ** 2
-                    print(data[objectClassifier[k]][i], data[objectClassifier[k]][j])
-                print()
+                    #print(data[objectClassifier[k]][i], data[objectClassifier[k]][j])
+                #print()
                 distance = sqrt(distance)
                 if distance < nearestNeighborDis: #checks if new distance is smaller
                     nearestNeighborDis = distance
                     nearestNeighborLoc = data[0][j]
-                    print("         better distance found: ", nearestNeighborDis, nearestNeighborLoc)
-                print("distance: ", distance, "loc: ", data[0][j])
-        print("testing calssification           ", nearestNeighborLoc,  data[0][i])
+                    #print("         better distance found: ", nearestNeighborDis, nearestNeighborLoc)
+                #print("distance: ", distance, "loc: ", data[0][j])
+        #print("testing calssification           ", nearestNeighborLoc,  data[0][i])
         if nearestNeighborLoc == data[0][i]:
-            print("sucess guess: ", nearestNeighborLoc, data[0][i])
+            #print("sucess guess: ", nearestNeighborLoc, data[0][i])
             correctlyClassified+= 1
-        else:
-            print("not good guess")
-        print("cc: ", correctlyClassified, "leng:", length)
+        #else:
+            #print("not good guess")
+        #print("cc: ", correctlyClassified, "leng:", length)
 
     return correctlyClassified / length
 
@@ -92,14 +119,20 @@ def openingFile(fileName):
     
 
 def main():
-    data = openingFile("CS170_Small_Data__4.txt") #CS170_Small_Data__3.txt
+    data = openingFile("TestData.txt") #CS170_Small_Data__3.txt
     length = len(data)
+    print(length)
     #forwardSelection(data, length)
-    #print(data)
-    #print(len(data[0]))
-    current_set = []
-    temp = accuracy(data, current_set, 1)
-    print(temp)
+    backwardElimination(data, length)
+    #current_set = []
+    #temp = accuracy(data, current_set, 1)
+    #print(temp)
     return 
 
+"""
+On small dataset 1 the error rate can be 0.95 when using only features 5  4  3
+On small dataset 2 the error rate can be 0.958 when using only features 4  1  5
+On small dataset 3 the error rate can be 0.954 when using only features 2  5  6
+On small dataset 4 the error rate can be 0.918 when using only features 4  6  3
+On large dataset 83 the error rate can be 0.95 when using only features 22   2  14"""
 main()
