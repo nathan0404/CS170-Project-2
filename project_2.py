@@ -1,6 +1,4 @@
-#import matplotlib.pyplot as plt
 from math import sqrt
-
 
 def forwardSelection(data, length):
     current_set = []
@@ -97,13 +95,6 @@ def accuracy(data, current_set, testing, distingisher):
         #print("cc: ", correctlyClassified, "leng:", length)
 
     return correctlyClassified / length
-
-def visualize(data):
-    x = data[1]
-    y = data[2]
-    classes = data[0]
-    plt.scatter(x, y, c=classes)
-    plt.show()
 
 def openingFile(fileName):
     file = open(fileName, "r")
