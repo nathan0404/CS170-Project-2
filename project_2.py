@@ -1,4 +1,4 @@
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 from math import sqrt
 
 
@@ -21,37 +21,44 @@ def forwardSelection(data, length):
         #print(f"Feature set {best_feature} was best, accuracy is {highest_value}%")
         current_set.append(featuresAdd)
 
-def accuracy(data, current_set, j):
-    length = len(data[0])
+def accuracy(data, current_set, testing):
+    length = len(data[0]) #finding length of rows to be searached
 
     correctlyClassified = 0
 
-    for i in range(length):
-        objectClassifier = []
+    for i in range(length): #searching all rows
+        objectClassifier = [] 
         print(i)
-        for k in range(len(data)): #creating object tsting
-            objectClassifier.append(data[k][i])
-        print(objectClassifier)
+        if len(current_set) != 0: #adds all current set to object Classifier
+            print("current set is empty")
+            for k in range(len(current_set)): #creating object tsting
+                objectClassifier.append(current_set[k])
+        objectClassifier.append(testing) #adds testing column to object classsfier to tst
+        print("object calssifier: ", objectClassifier)
         nearestNeighborDis = float('inf')
         nearestNeighborLoc = float('inf')
         for j in range(length): #going through all data
+            print("checking ", i, j)
             if j != i:
                 distance = 0
-                for k in range(1, len(data)): #finding distances with any dimensions
-                    distance += (objectClassifier[k] - data[k][j]) ** 2
-                    print(objectClassifier[k], data[k][j])
-                print("hi")
+                for k in range(0, len(objectClassifier)): #finding distances with any dimensions
+                    distance += (data[objectClassifier[k]][i] - data[objectClassifier[k]][j]) ** 2
+                    print(data[objectClassifier[k]][i], data[objectClassifier[k]][j])
+                print()
                 distance = sqrt(distance)
                 if distance < nearestNeighborDis: #checks if new distance is smaller
                     nearestNeighborDis = distance
                     nearestNeighborLoc = data[0][j]
+                    print("         better distance found: ", nearestNeighborDis, nearestNeighborLoc)
                 print("distance: ", distance, "loc: ", data[0][j])
-        if nearestNeighborLoc == objectClassifier[0]:
-            print("sucess guess: ", nearestNeighborLoc, objectClassifier[0])
+        print("testing calssification           ", nearestNeighborLoc,  data[0][i])
+        if nearestNeighborLoc == data[0][i]:
+            print("sucess guess: ", nearestNeighborLoc, data[0][i])
             correctlyClassified+= 1
         else:
             print("not good guess")
         print("cc: ", correctlyClassified, "leng:", length)
+
     return correctlyClassified / length
 
 def visualize(data):
@@ -85,13 +92,13 @@ def openingFile(fileName):
     
 
 def main():
-    data = openingFile("TestData.txt") #CS170_Small_Data__3.txt
+    data = openingFile("CS170_Small_Data__4.txt") #CS170_Small_Data__3.txt
     length = len(data)
     #forwardSelection(data, length)
     #print(data)
     #print(len(data[0]))
     current_set = []
-    temp = accuracy(data, current_set, 0)
+    temp = accuracy(data, current_set, 1)
     print(temp)
     return 
 
